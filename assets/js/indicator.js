@@ -119,6 +119,9 @@ canvas.addEventListener('click', (event) => {
         text.style.transition = '2s ease';
 
         if (pauseFlag) {
+            ctx.rect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fill();
             cancelAnimationFrame(animateId);
             clearInterval(enemiesSpawnInterval);
             text.style.color = 'red';

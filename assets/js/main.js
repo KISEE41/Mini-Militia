@@ -212,10 +212,10 @@ function main() {
             projectile.update();
 
             //remove from edges of screen
-            if ((projectile.x - projectile.radius < 0) ||
-                (projectile.x + projectile.radius > canvas.width) ||
-                (projectile.y + projectile.radius < 0) ||
-                (projectile.y - projectile.radius > canvas.height)
+            if ((projectile.position.x - projectile.position.radius < 0) ||
+                (projectile.position.x + projectile.position.radius > canvas.width) ||
+                (projectile.position.y + projectile.position.radius < 0) ||
+                (projectile.position.y - projectile.position.radius > canvas.height)
             ) {
                 setTimeout(() => {
                     projectiles.splice(projectileIndex, 1);
@@ -241,14 +241,14 @@ function main() {
 
             const dist = Math.hypot(player.position.x - enemy.x, player.position.y - enemy.y);
 
-            if (dist - enemy.radius - player.width / 2 < 1) {
+            if (isCollidedWith(player, enemy)) {
                 cancelAnimationFrame(animateId);
             }
 
             projectiles.forEach((projectile, projectileIndex) => {
                 const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
 
-                if (dist - enemy.radius - projectile.radius < 1) {
+                if (isCollidedWith(projectile, enemy)) {
                     projectiles.splice(projectileIndex, 1);
                     if (enemy.lifeSpan >= 10) {
                         enemy.lifeSpan = enemy.lifeSpan - (3 * lifeReductionWhenHit);

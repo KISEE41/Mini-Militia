@@ -2,9 +2,12 @@ import { player } from "./main.js";
 
 class Enemy {
     constructor(x, y, radius, color, velocity) {
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
+        this.position = {
+            x: x,
+            y: y
+        }
+        this.width = radius * 3;
+        this.height = radius * 3;
         this.color = color;
         this.velocity = velocity;
         this.lifeSpan = enemyLife;
@@ -12,23 +15,24 @@ class Enemy {
 
     draw() {
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+        ctx.rect(this.position.x, this.position.y, this.width, this.height);
         ctx.fillStyle = this.color;
         ctx.fill();
         ctx.closePath();
 
         ctx.beginPath();
-        ctx.moveTo(this.x - 50, this.y - 50);
-        ctx.lineTo(this.x + 50, this.y - 50);
-        ctx.lineTo(this.x + 50, this.y - 35);
-        ctx.lineTo(this.x - 50, this.y - 35);
-        ctx.lineTo(this.x - 50, this.y - 50);
+        ctx.moveTo(this.position.x - 6, this.position.y - 20);
+        ctx.lineTo(this.position.x + 94, this.position.y - 20);
+        ctx.lineTo(this.position.x + 94, this.position.y - 5);
+        ctx.lineTo(this.position.x - 6, this.position.y - 5);
+        ctx.lineTo(this.position.x - 6, this.position.y - 20);
         ctx.strokeStyle = 'white';
         ctx.stroke();
         ctx.closePath();
 
         ctx.beginPath();
-        ctx.rect(this.x - 50, this.y - 50, this.lifeSpan * 2, 15);
+        ctx.rect(this.position.x - 6, this.position.y - 20, this.lifeSpan * 2, 15);
         ctx.fillStyle = 'blue';
         ctx.fill();
         ctx.closePath();
@@ -36,8 +40,8 @@ class Enemy {
 
     update() {
         this.draw();
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
+        this.position.x += this.velocity.x;
+        this.position.y += this.velocity.y;
     }
 }
 
