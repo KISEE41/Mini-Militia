@@ -100,7 +100,7 @@ class Player {
         }
         this.width = 95;
         this.height = 152;
-        this.speed = 1;
+        this.speed = 2;
 
         this.booster = 150;
 
