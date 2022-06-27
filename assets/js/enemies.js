@@ -40,8 +40,12 @@ class Enemy {
 
     update() {
         this.draw();
+        if (this.position.y + this.height + this.velocity.y >= canvas.height - 180) {
+            this.velocity.y = 0;
+        }
         this.position.x += this.velocity.x;
         this.position.y += this.velocity.y;
+
     }
 }
 

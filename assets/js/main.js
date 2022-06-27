@@ -54,6 +54,9 @@ function main() {
     //player creation
     player = playerCreation();
 
+    //spawning enemies
+    spawnEnemies();
+
     //movement of the player
     function playerMovement() {
         //player movement with horizontal parallex effect
@@ -73,6 +76,9 @@ function main() {
                     })
                     genericObjects.forEach(genericObject => {
                         genericObject.position.x -= player.speed;
+                    });
+                    enemies.forEach(enemy => {
+                        enemy.position.x -= player.speed;
                     })
                 }
             } else if (keys.left.pressed) {
@@ -84,6 +90,9 @@ function main() {
                     });
                     genericObjects.forEach(genericObject => {
                         genericObject.position.x += player.speed;
+                    });
+                    enemies.forEach(enemy => {
+                        enemy.position.x += player.speed;
                     })
                 }
             }
@@ -101,6 +110,9 @@ function main() {
             });
             genericObjects.forEach(genericObject => {
                 genericObject.position.y += verticalParallexVelocity;
+            });
+            enemies.forEach(enemy => {
+                enemy.position.y += verticalParallexVelocity;
             })
         } else if (!keys.up.pressed && genericObjects[1].position.y + genericObjects[1].height <= canvas.height) {
             player.velocity.y += gravity;
@@ -116,6 +128,9 @@ function main() {
             });
             genericObjects.forEach(genericObject => {
                 genericObject.position.y -= verticalParallexVelocity;
+            });
+            enemies.forEach(enemy => {
+                enemy.position.y -= verticalParallexVelocity;
             })
         }
 
@@ -239,11 +254,9 @@ function main() {
         enemies.forEach((enemy, enemyIndex) => {
             enemy.update();
 
-            const dist = Math.hypot(player.position.x - enemy.x, player.position.y - enemy.y);
-
-            if (isCollidedWith(player, enemy)) {
-                cancelAnimationFrame(animateId);
-            }
+            // if (isCollidedWith(player, enemy)) {
+            //     cancelAnimationFrame(animateId);
+            // }
 
             projectiles.forEach((projectile, projectileIndex) => {
                 const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
@@ -260,6 +273,15 @@ function main() {
                     }
                 }
             });
+
+            if (distanceBetween(player, enemy) <= canvas.height / 2) {
+                enemy.velocity.x = (Math.random() - 0.5) * 2;
+                enemy.velocity.y = (Math.random() - 0.5) * 2;
+            } else {
+                var angle = calculateAngle(player, enemy);
+                enemy.velocity.x = Math.cos(angle);
+                enemy.velocity.y = Math.sin(angle);
+            }
         })
 
         //drawing pointing scope
@@ -268,10 +290,6 @@ function main() {
         //indicator
         indicator();
     }
-
-
-    //spawning enemies
-    spawnEnemies();
 
     //looping of game
     animate();

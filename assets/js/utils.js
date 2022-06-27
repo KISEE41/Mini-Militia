@@ -35,3 +35,19 @@ function rotate({ rotationAngle, x, y }) {
 
     return rotatedPoint;
 }
+
+function calculateAngle(obj1, obj2) {
+    //destination is obj1 and source is obj2
+    return (
+        Math.atan2(
+            obj1.position.y + obj1.height / 2 - obj2.position.y,
+            obj1.position.x + obj1.width / 2 - obj2.position.x
+        )
+    )
+}
+
+function distanceBetween(obj1, obj2) {
+    return Math.hypot(
+        obj1.position.x - obj2.position.x, obj1.position.y - obj2.position.y
+    )
+}
