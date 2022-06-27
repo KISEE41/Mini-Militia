@@ -1,0 +1,198 @@
+[
+    {
+        "x": 400,
+        "y": 506,
+        "image": "./assets/images/background-stone.png",
+        "width": 350,
+        "height": 400
+    },
+    {
+        "x": 150,
+        "y": 425,
+        "image": "./assets/images/ground.png",
+        "width": 518,
+        "height": 586
+    },
+    {
+        "x": 540,
+        "y": 761,
+        "image": "./assets/images/grass2.png",
+        "width": 150,
+        "height": 80
+    },
+    {
+        "x": 1210,
+        "y": 257,
+        "image": "./assets/images/tree.png",
+        "width": 350,
+        "height": 600
+    },
+    {
+        "x": 3432,
+        "y": 791,
+        "image": "./assets/images/grass2.png",
+        "width": 150,
+        "height": 80
+    },
+    {
+        "x": 1310,
+        "y": 726,
+        "image": "./assets/images/grass3.png",
+        "width": 200,
+        "height": 150
+    },
+    {
+        "x": 2746,
+        "y": 257,
+        "image": "./assets/images/tree.png",
+        "width": 350,
+        "height": 600
+    },
+    {
+        "x": 2846,
+        "y": 726,
+        "image": "./assets/images/grass3.png",
+        "width": 200,
+        "height": 150
+    },
+    {
+        "x": 1460,
+        "y": 169,
+        "image": "./assets/images/floatingSandRight.png",
+        "width": 551,
+        "height": 230
+    },
+    {
+        "x": 2880,
+        "y": 245,
+        "image": "./assets/images/floatingSandLeft.png",
+        "width": 551,
+        "height": 230
+    },
+    {
+        "x": 638,
+        "y": 813,
+        "image": "./assets/images/sandGround.png",
+        "width": 383,
+        "height": 200
+    },
+    {
+        "x": 1021,
+        "y": 813,
+        "image": "./assets/images/sandGround.png",
+        "width": 383,
+        "height": 200
+    },
+    {
+        "x": 1404,
+        "y": 813,
+        "image": "./assets/images/sandGround.png",
+        "width": 383,
+        "height": 200
+    },
+    {
+        "x": 1787,
+        "y": 813,
+        "image": "./assets/images/sandGround.png",
+        "width": 383,
+        "height": 200
+    },
+    {
+        "x": 2170,
+        "y": 813,
+        "image": "./assets/images/sandGround.png",
+        "width": 383,
+        "height": 200
+    },
+    {
+        "x": 2553,
+        "y": 813,
+        "image": "./assets/images/sandGround.png",
+        "width": 383,
+        "height": 200
+    },
+    {
+        "x": 2936,
+        "y": 813,
+        "image": "./assets/images/sandGround.png",
+        "width": 383,
+        "height": 200
+    },
+    {
+        "x": 3319,
+        "y": 813,
+        "image": "./assets/images/sandGround.png",
+        "width": 383,
+        "height": 200
+    },
+    {
+        "x": 3702,
+        "y": 813,
+        "image": "./assets/images/sandGround.png",
+        "width": 383,
+        "height": 200
+    },
+    {
+        "x": 4085,
+        "y": 813,
+        "image": "./assets/images/sandGround.png",
+        "width": 383,
+        "height": 200
+    },
+    {
+        "x": 560,
+        "y": 776,
+        "image": "./assets/images/big_stones.png",
+        "width": 150,
+        "height": 80
+    },
+    {
+        "x": 1820,
+        "y": 776,
+        "image": "./assets/images/big_stones.png",
+        "width": 150,
+        "height": 80
+    },
+    {
+        "x": 1575,
+        "y": 180,
+        "image": "./assets/images/big_stones.png",
+        "width": 150,
+        "height": 50
+    },
+    {
+        "x": 1950,
+        "y": 801,
+        "image": "./assets/images/big_stones.png",
+        "width": 150,
+        "height": 80
+    },
+    {
+        "x": 3099,
+        "y": 801,
+        "image": "./assets/images/big_stones.png",
+        "width": 150,
+        "height": 80
+    },
+    {
+        "x": 3149,
+        "y": 801,
+        "image": "./assets/images/big_stones.png",
+        "width": 150,
+        "height": 80
+    },
+    {
+        "x": 4403,
+        "y": 781,
+        "image": "./assets/images/big_stones.png",
+        "width": 150,
+        "height": 80
+    },
+    {
+        "x": 4468,
+        "y": 425,
+        "image": "./assets/images/ground-rotated.png",
+        "width": 518,
+        "height": 586
+    }
+]
