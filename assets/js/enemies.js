@@ -7,6 +7,7 @@ class Enemy {
         this.radius = radius;
         this.color = color;
         this.velocity = velocity;
+        this.lifeSpan = enemyLife;
     }
 
     draw() {
@@ -14,6 +15,23 @@ class Enemy {
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
         ctx.fillStyle = this.color;
         ctx.fill();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.moveTo(this.x - 50, this.y - 50);
+        ctx.lineTo(this.x + 50, this.y - 50);
+        ctx.lineTo(this.x + 50, this.y - 35);
+        ctx.lineTo(this.x - 50, this.y - 35);
+        ctx.lineTo(this.x - 50, this.y - 50);
+        ctx.strokeStyle = 'white';
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.rect(this.x - 50, this.y - 50, this.lifeSpan * 2, 15);
+        ctx.fillStyle = 'blue';
+        ctx.fill();
+        ctx.closePath();
     }
 
     update() {
@@ -25,11 +43,12 @@ class Enemy {
 
 
 export const enemies = [];
+export let enemiesSpawnInterval;
 
 export function spawnEnemies() {
-    setInterval(() => {
+    enemiesSpawnInterval = setInterval(() => {
         const x = randomIntFromRange(0, canvas.width);
-        const y = randomIntFromRange(-canvas.height * 2, -canvas.height * 3);
+        const y = -randomIntFromRange(canvas.height, canvas.height * 1.2);
         const radius = 30;
         const color = 'green';
 
@@ -44,5 +63,5 @@ export function spawnEnemies() {
         }
 
         enemies.push(new Enemy(x, y, radius, color, velocity));
-    }, 3000);
+    }, 5000);
 }

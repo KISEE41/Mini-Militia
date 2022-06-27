@@ -1,17 +1,17 @@
 import { BackgroundObject, Platform, backgroundImage } from './environment.js';
 import { playerCreation } from './player.js';
 import { keys, facingDirection, projectiles, mousePosition } from './keyEventListener.js';
-import { detectCollisionSide } from './collision.js';
+import { detectCollisionSide, isCollidedWith } from './collision.js';
 import { spawnEnemies, enemies } from './enemies.js';
 import { pointingTarget } from './targetIcon.js';
 import { indicator } from './indicator.js'
 
 export let player;
+export let animateId;
+export let animate;
 
 function main() {
     //all the varaibles needed are defined here
-    let animateId = requestAnimationFrame(animate);
-
     let genericObjects = [];
     let platforms = [];
 
@@ -181,12 +181,12 @@ function main() {
             player.currentSprite = player.sprites.run.left;
             player.currentCropHeight = player.sprites.run.cropHeight;
             player.boosterHeight = player.sprites.run.boosterHeight;
-        } else if (facingDirection === 'right' && keys.up.pressed && player.booster > 5 && player.currentSprite !== player.sprites.fly.right) {
+        } else if (facingDirection === 'right' && keys.up.pressed && player.booster > 10 && player.currentSprite !== player.sprites.fly.right) {
             player.frames = 0;
             player.currentSprite = player.sprites.fly.right;
             player.currentCropHeight = player.sprites.fly.cropHeight;
             player.boosterHeight = player.sprites.fly.boosterHeight;
-        } else if (facingDirection === 'left' && keys.up.pressed && player.booster > 5 && player.currentSprite !== player.sprites.fly.left) {
+        } else if (facingDirection === 'left' && keys.up.pressed && player.booster > 10 && player.currentSprite !== player.sprites.fly.left) {
             player.frames = 0;
             player.currentSprite = player.sprites.fly.left;
             player.currentCropHeight = player.sprites.fly.cropHeight;
@@ -196,10 +196,9 @@ function main() {
         player.update();
     }
 
-    function animate() {
+    animate = () => {
         animateId = requestAnimationFrame(animate);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         //drawing main background 
         backgroundImage.draw();
 
@@ -209,8 +208,23 @@ function main() {
         });
 
         //drawing projectiles/bullet
-        projectiles.forEach(projectile => {
+        projectiles.forEach((projectile, projectileIndex) => {
             projectile.update();
+
+            //remove from edges of screen
+            if ((projectile.x - projectile.radius < 0) ||
+                (projectile.x + projectile.radius > canvas.width) ||
+                (projectile.y + projectile.radius < 0) ||
+                (projectile.y - projectile.radius > canvas.height)
+            ) {
+                setTimeout(() => {
+                    projectiles.splice(projectileIndex, 1);
+                }, 0);
+            }
+
+            platforms.forEach(platform => {
+                if (isCollidedWith(projectile, platform)) projectiles.splice(projectileIndex, 1);
+            });
         });
 
         //tracking movement of player
@@ -222,10 +236,33 @@ function main() {
         });
 
         //drawing enemies
-        enemies.forEach(enemy => {
+        enemies.forEach((enemy, enemyIndex) => {
             enemy.update();
+
+            const dist = Math.hypot(player.position.x - enemy.x, player.position.y - enemy.y);
+
+            if (dist - enemy.radius - player.width / 2 < 1) {
+                cancelAnimationFrame(animateId);
+            }
+
+            projectiles.forEach((projectile, projectileIndex) => {
+                const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
+
+                if (dist - enemy.radius - projectile.radius < 1) {
+                    projectiles.splice(projectileIndex, 1);
+                    if (enemy.lifeSpan >= 10) {
+                        enemy.lifeSpan = enemy.lifeSpan - (3 * lifeReductionWhenHit);
+                        if (enemy.lifeSpan <= 0) enemy.lifeSpan = 0;
+                    } else {
+                        setTimeout(() => {
+                            enemies.splice(enemyIndex, 1);
+                        }, 0);
+                    }
+                }
+            });
         })
 
+        //drawing pointing scope
         pointingTarget(mousePosition.x, mousePosition.y);
 
         //indicator
@@ -234,7 +271,7 @@ function main() {
 
 
     //spawning enemies
-    // spawnEnemies();
+    spawnEnemies();
 
     //looping of game
     animate();

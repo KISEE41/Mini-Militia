@@ -20,11 +20,11 @@ export function detectCollisionSide(platform) {
     return ({ platform: platform, collidedside: collision });
 }
 
-export function isCollidedWith(platform) {
+export function isCollidedWith(obj1, obj2) {
     return (
-        (player.position.x + player.width > platform.position.x) &&
-        (player.position.x < platform.position.x + platform.width) &&
-        (player.position.y + player.height > platform.position.y) &&
-        (player.position.y < platform.position.y + platform.height)
+        (obj1.x + obj1.width > obj2.position.x) &&
+        (obj1.x < obj2.position.x + obj2.width) &&
+        (obj1.y + obj1.height > obj2.position.y) &&
+        (obj1.y < obj2.position.y + obj2.height)
     )
 }

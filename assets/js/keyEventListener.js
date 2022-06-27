@@ -1,6 +1,5 @@
 import { player } from './main.js';
 import { Projectile } from './bullet.js';
-import { pointingTarget } from './targetIcon.js';
 
 export let facingDirection = 'right';
 
@@ -95,7 +94,7 @@ addEventListener('click', (event) => {
     projectiles.push(new Projectile(
         player.position.x + player.playerHand.weaponPosition.x + player.playerHand.gun.handGun.width / 2,
         player.position.y + player.playerHand.weaponPosition.y + player.playerHand.gun.handGun.height / 2,
-        5, 'gold', velocity)
+        5, 'red', velocity)
     );
 })
 

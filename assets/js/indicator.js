@@ -1,9 +1,12 @@
-import { player } from './main.js';
+import { enemiesSpawnInterval, spawnEnemies } from './enemies.js';
+import { player, animateId, animate } from './main.js';
 
 const statusIcon = createImage('./assets/images/status_icons.png');
 const playPause = createImage('./assets/images/play-pause.png');
 const weaponIndicator = createImage('./assets/images/pistol.png');
 const head = createImage('./assets/images/head.png');
+
+let pauseFlag = false;
 
 export function indicator() {
     function lifeIndicator() {
@@ -95,3 +98,39 @@ export function indicator() {
     weaponIndication();
     lifeRemaining();
 }
+
+canvas.addEventListener('click', (event) => {
+    if (event.clientX >= 730 && event.clientX <= 761 && event.clientY >= 30 && event.clientY <= 63) {
+        pauseFlag = !pauseFlag;
+        const texts = document.querySelectorAll('.playPause');
+
+        texts.forEach(el => {
+            el.remove();
+        })
+
+        var text = document.createElement("h1");
+        text.setAttribute('class', 'playPause');
+        document.querySelector('body').appendChild(text);
+        text.style.fontSize = '40px';
+        text.style.position = 'fixed';
+        text.style.top = '50%';
+        text.style.left = '50%';
+        text.style.transform = 'translate(-50%, -50%)';
+        text.style.transition = '2s ease';
+
+        if (pauseFlag) {
+            cancelAnimationFrame(animateId);
+            clearInterval(enemiesSpawnInterval);
+            text.style.color = 'red';
+            text.innerHTML = 'PAUSED';
+        } else {
+            text.style.color = 'green';
+            text.innerHTML = 'PLAY';
+            setTimeout(() => {
+                text.remove();
+                requestAnimationFrame(animate);
+                spawnEnemies();
+            }, 500);
+        }
+    }
+})

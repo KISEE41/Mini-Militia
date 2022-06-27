@@ -105,7 +105,7 @@ class Player {
         this.booster = 150;
 
         this.frames = 0;
-        this.holdFrame = 40;
+        this.holdFrame = 24;
         this.frameCount = 0;
 
         this.sprites = {
