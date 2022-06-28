@@ -3,8 +3,8 @@ import { player } from "./main.js";
 class EnemyWeapon {
     constructor() {
         this.weapons = {
-            left: createImage('./assets/images/enemy-gun-r-left.png'),
-            right: createImage('./assets/images/enemy-gun-right.png'),
+            left: createImage('./assets/images/gun-r-left.png'),
+            right: createImage('./assets/images/gun-right.png'),
         }
 
         this.width = 55;
