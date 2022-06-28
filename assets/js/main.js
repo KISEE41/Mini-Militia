@@ -266,8 +266,8 @@ function main() {
 
         //drawing enemies
         enemies.forEach((enemy, enemyIndex) => {
-            if (enemy.position.x >= player.position.x) enemy.facingDirection = 'left';
-            else if (enemy.position.x < player.position.y) enemy.facingDirection = 'right';
+            if (enemy.position.x >= player.position.x) enemy.facingEDirection = 'left';
+            else if (enemy.position.x < player.position.y) enemy.facingEDirection = 'right';
 
             enemy.update();
 

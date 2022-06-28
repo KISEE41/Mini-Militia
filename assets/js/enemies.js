@@ -24,16 +24,16 @@ class EnemyWeapon {
         this.isFire = true;
     }
 
-    update(enemyX, enemyY, ememyWidth, enemyHeight, facingDirection) {
+    update(enemyX, enemyY, ememyWidth, enemyHeight, enemyFacingDirection) {
         this.angle = Math.atan2((this.weaponPosition.y - (player.position.y + player.height / 2)),
             (this.weaponPosition.x - (player.position.x + player.width / 2)));
 
-        if (facingDirection === 'right') {
+        if (enemyFacingDirection === 'right') {
             this.enemyWeapon = this.weapons.right;
             this.weaponPosition.x = enemyX + 40;
             this.weaponPosition.y = enemyY + enemyHeight * 2 / 3;
             this.angle = this.angle + Math.PI;
-        } else if (facingDirection === 'left') {
+        } else if (enemyFacingDirection === 'left') {
             this.enemyWeapon = this.weapons.left;
             this.weaponPosition.x = enemyX + ememyWidth - 30;
             this.weaponPosition.y = enemyY + enemyHeight * 2 / 3 + 10;
@@ -72,7 +72,7 @@ class Enemy {
         this.velocity = velocity;
         this.lifeSpan = enemyLife;
 
-        this.facingDirection = 'right';
+        this.facingEDirection = 'right';
 
         this.sprites = {
             left: createImage('./assets/images/enemy-left.png'),
@@ -113,13 +113,13 @@ class Enemy {
     }
     update() {
         this.draw();
-        if (this.facingDirection === 'right') {
+        if (this.facingEDirection === 'right') {
             this.enemyImage = this.sprites.right;
-        } else if (this.facingDirection === 'left') {
+        } else if (this.facingEDirection === 'left') {
             this.enemyImage = this.sprites.left;
         }
 
-        this.weapon.update(this.position.x, this.position.y, this.width, this.height, this.facingDirection);
+        this.weapon.update(this.position.x, this.position.y, this.width, this.height, this.facingEDirection);
 
         if (this.position.y + this.height + this.velocity.y >= canvas.height - 180) {
             this.velocity.y = 0;
