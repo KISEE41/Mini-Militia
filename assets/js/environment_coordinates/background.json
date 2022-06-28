@@ -182,17 +182,17 @@
         "height": 80
     },
     {
-        "x": 4403,
-        "y": 781,
-        "image": "./assets/images/big_stones.png",
-        "width": 150,
-        "height": 80
-    },
-    {
         "x": 4468,
         "y": 425,
         "image": "./assets/images/ground-rotated.png",
         "width": 518,
         "height": 586
+    },
+    {
+        "x": 4403,
+        "y": 781,
+        "image": "./assets/images/big_stones.png",
+        "width": 150,
+        "height": 80
     }
 ]

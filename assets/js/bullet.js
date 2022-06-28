@@ -1,5 +1,5 @@
 export class Projectile {
-    constructor(x, y, radius, color, velocity) {
+    constructor(x, y, radius, color = '#fffb42', velocity) {
         this.position = {
             x: x,
             y: y

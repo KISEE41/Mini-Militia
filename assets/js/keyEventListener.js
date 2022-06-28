@@ -79,7 +79,8 @@ addEventListener('mousemove', (event) => {
     if (mousePosition.x <= player.position.x + player.width / 2) facingDirection = 'left';
     else if (mousePosition.x >= player.position.x + player.width / 2) facingDirection = 'right';
 
-    mousePointingAngle = Math.atan2(mousePosition.y - (player.position.y + player.height / 1.6), mousePosition.x - (player.position.x + player.width / 2.6));
+    mousePointingAngle = Math.atan2(mousePosition.y - (player.position.y + player.height / 1.6),
+        mousePosition.x - (player.position.x + player.width / 2.6));
 })
 
 //shoot the projectile

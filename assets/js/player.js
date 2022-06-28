@@ -102,7 +102,8 @@ class Player {
         this.height = 152;
         this.speed = 2;
 
-        this.booster = 150;
+        this.booster = boosterLimit;
+        this.playerLifeSpan = playerLifeLimit;
 
         this.frames = 0;
         this.holdFrame = 24;

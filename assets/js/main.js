@@ -2,9 +2,10 @@ import { BackgroundObject, Platform, backgroundImage } from './environment.js';
 import { playerCreation } from './player.js';
 import { keys, facingDirection, projectiles, mousePosition } from './keyEventListener.js';
 import { detectCollisionSide, isCollidedWith } from './collision.js';
-import { spawnEnemies, enemies } from './enemies.js';
+import { spawnEnemies, enemies, enemiesSpawnInterval } from './enemies.js';
 import { pointingTarget } from './targetIcon.js';
 import { indicator } from './indicator.js'
+import { Projectile } from './bullet.js';
 
 export let player;
 export let animateId;
@@ -48,14 +49,15 @@ function main() {
             })
     }
 
-    //environment creation
-    createEnvironment();
-
-    //player creation
-    player = playerCreation();
-
-    //spawning enemies
-    spawnEnemies();
+    function reset() {
+        cancelAnimationFrame(animateId);
+        const text = document.createElement('h1');
+        text.innerHTML = "HIT";
+        document.querySelector('body').appendChild(text);
+        text.style.position = 'fixed';
+        text.style.top = "50%";
+        text.style.left = "50%";
+    }
 
     //movement of the player
     function playerMovement() {
@@ -68,7 +70,7 @@ function main() {
             player.velocity.x = 0;
             //parallex effect
             if (keys.right.pressed) {
-                if (genericObjects[genericObjects.length - 1].position.x <= canvas.width / 2 - 200) {
+                if (genericObjects[genericObjects.length - 2].position.x <= canvas.width / 2 - 200) {
                     player.velocity.x = 0;
                 } else {
                     platforms.forEach(platform => {
@@ -114,13 +116,25 @@ function main() {
             enemies.forEach(enemy => {
                 enemy.position.y += verticalParallexVelocity;
             })
-        } else if (!keys.up.pressed && genericObjects[1].position.y + genericObjects[1].height <= canvas.height) {
+        } else if (!keys.up.pressed && genericObjects[1] !== undefined && genericObjects[1].position.y + genericObjects[1].height >= canvas.height) {
+            player.velocity.y = 0;
+            player.booster = (player.booster >= 150) ? 150 : player.booster + boosterAddition;
+            platforms.forEach(platform => {
+                platform.position.y -= verticalParallexVelocity;
+            });
+            genericObjects.forEach(genericObject => {
+                genericObject.position.y -= verticalParallexVelocity;
+            });
+            enemies.forEach(enemy => {
+                enemy.position.y -= verticalParallexVelocity;
+            })
+        } else if (!keys.up.pressed && genericObjects[1] !== undefined && genericObjects[1].position.y + genericObjects[1].height <= canvas.height) {
             player.velocity.y += gravity;
             player.booster = (player.booster >= 150) ? 150 : player.booster + boosterAddition;
             if (player.position.y + player.height >= canvas.height - 172) {
                 player.velocity.y = 0;
             }
-        } else if (!keys.up.pressed && genericObjects[1].position.y + genericObjects[1].height >= canvas.height) {
+        } else if (!keys.up.pressed && genericObjects[1] !== undefined && genericObjects[1].position.y + genericObjects[1].height >= canvas.height) {
             player.velocity.y = 0;
             player.booster = (player.booster >= 150) ? 150 : player.booster + boosterAddition;
             platforms.forEach(platform => {
@@ -227,16 +241,16 @@ function main() {
             projectile.update();
 
             //remove from edges of screen
-            if ((projectile.position.x - projectile.position.radius < 0) ||
-                (projectile.position.x + projectile.position.radius > canvas.width) ||
-                (projectile.position.y + projectile.position.radius < 0) ||
-                (projectile.position.y - projectile.position.radius > canvas.height)
+            if ((projectile.position.x + projectile.width < 0) ||
+                (projectile.position.x > canvas.width) ||
+                (projectile.position.y < 0) ||
+                (projectile.position.y - projectile.height > canvas.height - 150)
             ) {
                 setTimeout(() => {
                     projectiles.splice(projectileIndex, 1);
                 }, 0);
-            }
 
+            }
             platforms.forEach(platform => {
                 if (isCollidedWith(projectile, platform)) projectiles.splice(projectileIndex, 1);
             });
@@ -252,15 +266,12 @@ function main() {
 
         //drawing enemies
         enemies.forEach((enemy, enemyIndex) => {
+            if (enemy.position.x >= player.position.x) enemy.facingDirection = 'left';
+            else if (enemy.position.x < player.position.y) enemy.facingDirection = 'right';
+
             enemy.update();
 
-            // if (isCollidedWith(player, enemy)) {
-            //     cancelAnimationFrame(animateId);
-            // }
-
             projectiles.forEach((projectile, projectileIndex) => {
-                const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y);
-
                 if (isCollidedWith(projectile, enemy)) {
                     projectiles.splice(projectileIndex, 1);
                     if (enemy.lifeSpan >= 10) {
@@ -274,13 +285,68 @@ function main() {
                 }
             });
 
-            if (distanceBetween(player, enemy) <= canvas.height / 2) {
-                enemy.velocity.x = (Math.random() - 0.5) * 2;
-                enemy.velocity.y = (Math.random() - 0.5) * 2;
+            if (distanceBetween(player, enemy) <= canvas.height * 2 / 3) {
+                setTimeout(() => {
+                    enemy.velocity.x = (facingDirection === 'right') ? 1 : -1;
+                    enemy.velocity.y = (Math.random() > 0.5) ? 1 : -1;
+                }, 1000);
+
+                if (enemy.weapon.isFire) {
+                    const angle = Math.atan2(player.position.y + player.height / 2 - enemy.weapon.weaponPosition.y + enemy.weapon.height / 2,
+                        player.position.x + player.height / 2 - enemy.weapon.weaponPosition.x - enemy.weapon.width / 2);
+
+                    enemy.weapon.bullet.push(new Projectile(
+                        enemy.weapon.weaponPosition.x,
+                        enemy.weapon.weaponPosition.y,
+                        5,
+                        'yellow',
+                        {
+                            x: Math.cos(angle) * projectileSpeed,
+                            y: Math.sin(angle) * projectileSpeed
+                        }
+                    ));
+                    setTimeout(() => enemy.weapon.isFire = false, 0);
+                    setTimeout(() => enemy.weapon.isFire = true, 5000);
+                }
             } else {
                 var angle = calculateAngle(player, enemy);
                 enemy.velocity.x = Math.cos(angle);
                 enemy.velocity.y = Math.sin(angle);
+            }
+
+            if (enemy.weapon.bullet.length !== 0) {
+                enemy.weapon.bullet.forEach((bullet, bulletIndex) => {
+                    bullet.update();
+                    if (isCollidedWith(player, bullet)) {
+                        player.playerLifeSpan -= lifeReductionWhenHit;
+                        setTimeout(() => enemy.weapon.bullet.splice(bulletIndex, 1), 0);
+
+                        if (player.playerLifeSpan <= 0) {
+                            player.playerLifeSpan = 0;
+                            reset();
+                        }
+                    }
+
+                    platforms.forEach(platform => {
+                        if ((platform.position.x + platform.width > bullet.position.x) &&
+                            (platform.position.x < bullet.position.x + bullet.width) &&
+                            (platform.position.y + platform.height > bullet.position.y) &&
+                            (platform.position.y < bullet.position.y + bullet.height)) {
+                            setTimeout(() => enemy.weapon.bullet.splice(bulletIndex, 1), 0);
+                        }
+                    });
+
+                    if (
+                        (bullet.position.x + bullet.width < 0) ||
+                        (bullet.position.x > canvas.width) ||
+                        (bullet.position.y < 0) ||
+                        (bullet.position.y - bullet.height > canvas.height - 150)
+                        && enemy.weapon.isFire
+                    ) {
+                        setTimeout(() => enemy.weapon.bullet.splice(bulletIndex, 1), 0);
+                    }
+                })
+
             }
         })
 
@@ -290,6 +356,15 @@ function main() {
         //indicator
         indicator();
     }
+
+    //environment creation
+    createEnvironment();
+
+    //player creation
+    player = playerCreation();
+
+    //spawning enemies
+    spawnEnemies();
 
     //looping of game
     animate();

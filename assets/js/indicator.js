@@ -40,7 +40,7 @@ export function indicator() {
         ctx.closePath();
 
         ctx.beginPath();
-        ctx.rect(580, 43, 100, 18);
+        ctx.rect(580, 43, player.playerLifeSpan, 18);
         ctx.fillStyle = 'rgb(238, 130, 238)';
         ctx.fill();
         ctx.closePath();
