@@ -46,6 +46,7 @@ class EnemyWeapon {
     draw() {
         // //weapon position
         ctx.save();
+        ctx.beginPath();
         ctx.translate(this.weaponPosition.x, this.weaponPosition.y);
         ctx.rotate(this.angle);
         // ctx.rect(0, 0, this.width, this.height);
@@ -53,6 +54,7 @@ class EnemyWeapon {
         // ctx.strokeStyle = 'yellow';
         // ctx.stroke();
         ctx.drawImage(this.enemyWeapon, 0, 0, this.width, this.height);
+        ctx.closePath();
         ctx.restore();
     }
 }

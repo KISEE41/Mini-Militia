@@ -77,12 +77,14 @@ class Hand {
     draw() {
         ctx.save();
         this.update();
+        ctx.beginPath();
         ctx.translate(this.position.x, this.position.y);
         ctx.rotate(this.rotationAngle);
         // ctx.fillStyle = 'yellow';
         // ctx.fillRect(0, 0, this.width, this.height);
         ctx.drawImage(this.weapon, this.weaponPosition.x, this.weaponPosition.y, this.gun.handGun.width, this.gun.handGun.height);
         ctx.drawImage(this.handImage, 0, 0, this.width, this.height);
+        ctx.closePath();
         ctx.restore();
     }
 }

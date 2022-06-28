@@ -12,7 +12,7 @@ const boosterAddition = 0.025;
 
 const enemyLife = 50;
 
-const lifeReductionWhenHit = 2;
+const lifeReductionWhenHit = 5;
 
 const boosterLimit = 150;
 const playerLifeLimit = 150;
