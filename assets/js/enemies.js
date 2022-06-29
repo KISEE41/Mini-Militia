@@ -85,13 +85,13 @@ class Enemy {
     }
 
     draw() {
-        ctx.beginPath();
+        // ctx.beginPath();
         // ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-        ctx.rect(this.position.x, this.position.y, this.width, this.height);
+        // ctx.rect(this.position.x, this.position.y, this.width, this.height);
         ctx.drawImage(this.enemyImage, this.position.x, this.position.y, this.width, this.height);
-        ctx.strokeStyle = this.color;
-        ctx.stroke();
-        ctx.closePath();
+        // ctx.strokeStyle = this.color;
+        // ctx.stroke();
+        // ctx.closePath();
 
         ctx.beginPath();
         ctx.moveTo(this.position.x - 6, this.position.y - 20);
@@ -154,5 +154,5 @@ export function spawnEnemies() {
 
         enemies.push(new Enemy(x, y, velocity));
 
-    }, 25000);
+    }, 15000);
 }

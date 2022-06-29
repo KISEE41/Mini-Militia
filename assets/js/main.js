@@ -1,11 +1,13 @@
 import { BackgroundObject, Platform, backgroundImage } from './environment.js';
 import { playerCreation } from './player.js';
-import { keys, facingDirection, projectiles, mousePosition } from './keyEventListener.js';
+import { keys, facingDirection, projectiles, mousePosition, listen } from './keyEventListener.js';
 import { detectCollisionSide, isCollidedWith } from './collision.js';
 import { spawnEnemies, enemies, enemiesSpawnInterval } from './enemies.js';
 import { pointingTarget } from './targetIcon.js';
 import { indicator } from './indicator.js'
 import { Projectile } from './bullet.js';
+
+import { start } from './start.js';
 
 export let player;
 export let animateId;
@@ -14,10 +16,12 @@ export let life = 3;
 export let kills = 0;
 
 
-function main() {
+export function main() {
     //all the varaibles needed are defined here
     let genericObjects = [];
     let platforms = [];
+
+    gameStart.play();
 
     //setting up the environment
     function createEnvironment() {
@@ -52,9 +56,24 @@ function main() {
             })
     }
 
+    function clearInstances() {
+        kills = 0;
+        life = 3;
+        player = undefined;
+        enemies.forEach((enemy, enemyIndex) => {
+            enemies.splice(enemyIndex, 1);
+        })
+    }
+
     function reset() {
         cancelAnimationFrame(animateId);
         clearInterval(enemiesSpawnInterval);
+
+        player.position.x = canvas.width / 2;
+        player.position.y = 10;
+        player.playerLifeSpan = playerLifeLimit;
+        player.booster = boosterLimit;
+
         life -= 1;
         ctx.rect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
@@ -65,38 +84,75 @@ function main() {
             document.querySelector('body').appendChild(text);
             text.style.fontSize = '40px';
             text.style.position = 'fixed';
-            text.style.top = '50%';
+            text.style.top = '40%';
             text.style.left = '50%';
             text.style.transform = 'translate(-50%, -50%)';
             text.style.transition = '2s ease';
             text.style.color = 'white';
             text.innerHTML = "GAME OVER";
+
+            const gameOverbox = document.createElement('div');
+            document.querySelector('body').appendChild(gameOverbox);
+            gameOverbox.style.width = '500px';
+            gameOverbox.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            gameOverbox.style.borderRadius = '10px';
+            gameOverbox.style.padding = '30px';
+            gameOverbox.style.color = 'green';
+            gameOverbox.style.fontSize = '20px';
+            gameOverbox.style.textAlign = 'center';
+            gameOverbox.style.position = 'fixed';
+
+            const txtKill = document.createElement('h1');
+            gameOverbox.appendChild(txtKill);
+
+            txtKill.innerHTML = `Total Kills: ${kills}`;
+
+            const clickHere = document.createElement('div');
+            gameOverbox.appendChild(clickHere);
+            clickHere.style.borderBottom = '1px solid green';
+            clickHere.innerHTML = "click me to try again";
+            clickHere.style.display = 'inline';
+            clickHere.style.cursor = 'pointer';
+            clickHere.addEventListener('click', () => {
+                text.remove();
+                gameOverbox.remove();
+
+                clearInstances();
+
+                setTimeout(main(), 2000);
+            });
+
+
         } else if (life > 0) {
             let timeCount = 6;
 
             let timeCounter = setInterval(() => {
-                text.innerHTML = `Total Kills: ${kills}\nRespawning in ${timeCount} sec...`;
+                textRespawn.innerHTML = `Respawning in ${timeCount} sec...`;
                 timeCount--;
             }, 1000);
 
             player = undefined;
             player = playerCreation();
-            player.position.x = canvas.width / 2;
-            player.position.y = 10;
-            player.playerLifeSpan = playerLifeLimit;
-            player.booster = boosterLimit;
-            const text = document.createElement('h1');
-            document.querySelector('body').appendChild(text);
-            text.style.fontSize = '40px';
-            text.style.position = 'fixed';
-            text.style.top = '50%';
-            text.style.left = '50%';
-            text.style.transform = 'translate(-50%, -50%)';
-            text.style.color = 'white';
+
+            const textRespawn = document.createElement('h1');
+            const textKill = document.createElement('h2');
+            document.querySelector('body').appendChild(textRespawn);
+            document.querySelector('body').appendChild(textKill);
+            textRespawn.style.fontSize = '40px';
+            textRespawn.style.color = 'white';
+            textRespawn.style.position = 'fixed';
+
+            textKill.style.fontSize = '30px';
+            textKill.style.color = 'red';
+            textKill.style.padding = '5px';
+            textKill.style.position = 'fixed';
+            textKill.style.marginTop = "-80px"
+            textKill.innerHTML = `Kills: ${kills}`;
 
             setTimeout(() => {
                 clearInterval(timeCounter);
-                text.remove();
+                textRespawn.remove();
+                textKill.remove();
                 spawnEnemies();
                 requestAnimationFrame(animate);
             }, 7000);
@@ -320,8 +376,8 @@ function main() {
 
         //drawing enemies
         enemies.forEach((enemy, enemyIndex) => {
-            if (enemy.position.x >= player.position.x) enemy.facingEDirection = 'left';
-            else if (enemy.position.x < player.position.y) enemy.facingEDirection = 'right';
+            if (enemy.position.x > player.position.x) enemy.facingEDirection = 'left';
+            else if (enemy.position.x <= player.position.y) enemy.facingEDirection = 'right';
 
             platforms.forEach(platform => {
                 if (isCollidedWith(platform, enemy)) {
@@ -340,6 +396,7 @@ function main() {
                         if (enemy.lifeSpan <= 0) enemy.lifeSpan = 0;
                     } else {
                         kills += 1;
+                        playMusic();
                         setTimeout(() => {
                             enemies.splice(enemyIndex, 1);
                         }, 0);
@@ -367,6 +424,7 @@ function main() {
                             y: Math.sin(angle) * projectileSpeed
                         }
                     ));
+                    fire2.play();
                     setTimeout(() => enemy.weapon.isFire = false, 0);
                     setTimeout(() => enemy.weapon.isFire = true, 2000);
                 }
@@ -387,6 +445,7 @@ function main() {
                         setTimeout(() => enemy.weapon.bullet.splice(bulletIndex, 1), 0);
 
                         if (player.playerLifeSpan <= 0) {
+                            dead.play();
                             player.playerLifeSpan = 0;
                             reset()
                         }
@@ -428,6 +487,8 @@ function main() {
     //player creation
     player = playerCreation();
 
+    listen();
+
     //spawning enemies
     spawnEnemies();
 
@@ -435,4 +496,4 @@ function main() {
     animate();
 }
 
-main();
+start();

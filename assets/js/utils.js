@@ -51,3 +51,8 @@ function distanceBetween(obj1, obj2) {
         obj1.position.x - obj2.position.x, obj1.position.y - obj2.position.y
     )
 }
+
+
+function playMusic() {
+    duringPlayMusic[randomIntFromRange(0, duringPlayMusic.length - 1)].play();
+}
