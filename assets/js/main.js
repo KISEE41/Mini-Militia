@@ -10,6 +10,9 @@ import { Projectile } from './bullet.js';
 export let player;
 export let animateId;
 export let animate;
+export let life = 3;
+export let kills = 0;
+
 
 function main() {
     //all the varaibles needed are defined here
@@ -51,12 +54,109 @@ function main() {
 
     function reset() {
         cancelAnimationFrame(animateId);
-        const text = document.createElement('h1');
-        text.innerHTML = "HIT";
-        document.querySelector('body').appendChild(text);
-        text.style.position = 'fixed';
-        text.style.top = "50%";
-        text.style.left = "50%";
+        clearInterval(enemiesSpawnInterval);
+        life -= 1;
+        ctx.rect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.fill();
+
+        if (life <= 0) {
+            const text = document.createElement('h1');
+            document.querySelector('body').appendChild(text);
+            text.style.fontSize = '40px';
+            text.style.position = 'fixed';
+            text.style.top = '50%';
+            text.style.left = '50%';
+            text.style.transform = 'translate(-50%, -50%)';
+            text.style.transition = '2s ease';
+            text.style.color = 'white';
+            text.innerHTML = "GAME OVER";
+        } else if (life > 0) {
+            let timeCount = 6;
+
+            let timeCounter = setInterval(() => {
+                text.innerHTML = `Total Kills: ${kills}\nRespawning in ${timeCount} sec...`;
+                timeCount--;
+            }, 1000);
+
+            player = undefined;
+            player = playerCreation();
+            player.position.x = canvas.width / 2;
+            player.position.y = 10;
+            player.playerLifeSpan = playerLifeLimit;
+            player.booster = boosterLimit;
+            const text = document.createElement('h1');
+            document.querySelector('body').appendChild(text);
+            text.style.fontSize = '40px';
+            text.style.position = 'fixed';
+            text.style.top = '50%';
+            text.style.left = '50%';
+            text.style.transform = 'translate(-50%, -50%)';
+            text.style.color = 'white';
+
+            setTimeout(() => {
+                clearInterval(timeCounter);
+                text.remove();
+                spawnEnemies();
+                requestAnimationFrame(animate);
+            }, 7000);
+        }
+    }
+
+    function chooseImageSprite() {
+        //image sprite animation with respect to mouse pointer and key pressed
+        if (facingDirection === "right" && keys.right.pressed && !keys.up.pressed && player.currentSprite !== player.sprites.run.right) {
+            player.frames = 0;
+            player.currentSprite = player.sprites.run.right;
+            player.currentCropHeight = player.sprites.run.cropHeight;
+            player.boosterHeight = player.sprites.run.boosterHeight;
+        } else if (facingDirection === "left" && keys.left.pressed && !keys.up.pressed && player.currentSprite !== player.sprites.run.left) {
+            player.frames = 0;
+            player.currentSprite = player.sprites.run.left;
+            player.currentCropHeight = player.sprites.run.cropHeight;
+            player.boosterHeight = player.sprites.run.boosterHeight;
+        }
+        else if (facingDirection === "right" && (!keys.right.pressed && !keys.left.pressed) && !keys.up.pressed && player.currentSprite !== player.sprites.stand.right) {
+            player.frames = 0;
+            player.currentSprite = player.sprites.stand.right;
+            player.currentCropHeight = player.sprites.stand.cropHeight;
+            player.boosterHeight = player.sprites.stand.boosterHeight
+        } else if (facingDirection === "left" && (!keys.right.pressed && !keys.left.pressed) && !keys.up.pressed && player.currentSprite !== player.sprites.stand.left) {
+            player.frames = 0;
+            player.currentSprite = player.sprites.stand.left;
+            player.currentCropHeight = player.sprites.stand.cropHeight;
+            player.boosterHeight = player.sprites.stand.boosterHeight
+        } else if (facingDirection === 'right' && keys.left.pressed && !keys.up.pressed && player.currentSprite !== player.sprites.run.right) {
+            player.frames = 0;
+            player.currentSprite = player.sprites.run.right;
+            player.currentCropHeight = player.sprites.run.cropHeight;
+            player.boosterHeight = player.sprites.run.boosterHeight;
+        } else if (facingDirection === 'left' && keys.right.pressed && !keys.up.pressed && player.currentSprite !== player.sprites.run.left) {
+            player.frames = 0;
+            player.currentSprite = player.sprites.run.left;
+            player.currentCropHeight = player.sprites.run.cropHeight;
+            player.boosterHeight = player.sprites.run.boosterHeight;
+        } else if (facingDirection === 'right' && keys.up.pressed && player.booster >= 10 && player.currentSprite !== player.sprites.fly.right) {
+            player.frames = 0;
+            player.currentSprite = player.sprites.fly.right;
+            player.currentCropHeight = player.sprites.fly.cropHeight;
+            player.boosterHeight = player.sprites.fly.boosterHeight;
+        } else if (facingDirection === 'left' && keys.up.pressed && player.booster >= 10 && player.currentSprite !== player.sprites.fly.left) {
+            player.frames = 0;
+            player.currentSprite = player.sprites.fly.left;
+            player.currentCropHeight = player.sprites.fly.cropHeight;
+            player.boosterHeight = player.sprites.fly.boosterHeight;
+        } else if (keys.up.pressed && player.booster <= 10) {
+            if (facingDirection === 'right') {
+                player.currentSprite = player.sprites.run.right;
+                player.currentCropHeight = player.sprites.run.cropHeight;
+                player.boosterHeight = player.sprites.run.boosterHeight;
+            } else if (facingDirection === 'left') {
+                player.currentSprite = player.sprites.run.left;
+                player.currentCropHeight = player.sprites.run.cropHeight;
+                player.boosterHeight = player.sprites.run.boosterHeight;
+            }
+        }
     }
 
     //movement of the player
@@ -134,9 +234,8 @@ function main() {
             if (player.position.y + player.height >= canvas.height - 172) {
                 player.velocity.y = 0;
             }
-        } else if (!keys.up.pressed && genericObjects[1] !== undefined && genericObjects[1].position.y + genericObjects[1].height >= canvas.height) {
+        } else if (keys.up.pressed && genericObjects[1] !== undefined && genericObjects[1].position.y + genericObjects[1].height >= canvas.height) {
             player.velocity.y = 0;
-            player.booster = (player.booster >= 150) ? 150 : player.booster + boosterAddition;
             platforms.forEach(platform => {
                 platform.position.y -= verticalParallexVelocity;
             });
@@ -174,53 +273,7 @@ function main() {
             }
         })
 
-        //image sprite animation with respect to mouse pointer and key pressed
-        if (facingDirection === "right" && keys.right.pressed && !keys.up.pressed && player.currentSprite !== player.sprites.run.right) {
-            // console.log("running right")
-            player.frames = 0;
-            player.currentSprite = player.sprites.run.right;
-            player.currentCropHeight = player.sprites.run.cropHeight;
-            player.boosterHeight = player.sprites.run.boosterHeight;
-        } else if (facingDirection === "left" && keys.left.pressed && !keys.up.pressed && player.currentSprite !== player.sprites.run.left) {
-            // console.log("running left")
-            player.frames = 0;
-            player.currentSprite = player.sprites.run.left;
-            player.currentCropHeight = player.sprites.run.cropHeight;
-            player.boosterHeight = player.sprites.run.boosterHeight;
-        }
-        else if (facingDirection === "right" && (!keys.right.pressed && !keys.left.pressed) && !keys.up.pressed && player.currentSprite !== player.sprites.stand.right) {
-            // console.log("standing right")
-            player.frames = 0;
-            player.currentSprite = player.sprites.stand.right;
-            player.currentCropHeight = player.sprites.stand.cropHeight;
-            player.boosterHeight = player.sprites.stand.boosterHeight
-        } else if (facingDirection === "left" && (!keys.right.pressed && !keys.left.pressed) && !keys.up.pressed && player.currentSprite !== player.sprites.stand.left) {
-            // console.log("standing left")
-            player.frames = 0;
-            player.currentSprite = player.sprites.stand.left;
-            player.currentCropHeight = player.sprites.stand.cropHeight;
-            player.boosterHeight = player.sprites.stand.boosterHeight
-        } else if (facingDirection === 'right' && keys.left.pressed && !keys.up.pressed && player.currentSprite !== player.sprites.run.right) {
-            player.frames = 0;
-            player.currentSprite = player.sprites.run.right;
-            player.currentCropHeight = player.sprites.run.cropHeight;
-            player.boosterHeight = player.sprites.run.boosterHeight;
-        } else if (facingDirection === 'left' && keys.right.pressed && !keys.up.pressed && player.currentSprite !== player.sprites.run.left) {
-            player.frames = 0;
-            player.currentSprite = player.sprites.run.left;
-            player.currentCropHeight = player.sprites.run.cropHeight;
-            player.boosterHeight = player.sprites.run.boosterHeight;
-        } else if (facingDirection === 'right' && keys.up.pressed && player.booster > 10 && player.currentSprite !== player.sprites.fly.right) {
-            player.frames = 0;
-            player.currentSprite = player.sprites.fly.right;
-            player.currentCropHeight = player.sprites.fly.cropHeight;
-            player.boosterHeight = player.sprites.fly.boosterHeight;
-        } else if (facingDirection === 'left' && keys.up.pressed && player.booster > 10 && player.currentSprite !== player.sprites.fly.left) {
-            player.frames = 0;
-            player.currentSprite = player.sprites.fly.left;
-            player.currentCropHeight = player.sprites.fly.cropHeight;
-            player.boosterHeight = player.sprites.fly.boosterHeight;
-        }
+        chooseImageSprite();
 
         player.update();
     }
@@ -228,6 +281,7 @@ function main() {
     animate = () => {
         animateId = requestAnimationFrame(animate);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         //drawing main background 
         backgroundImage.draw();
 
@@ -269,6 +323,13 @@ function main() {
             if (enemy.position.x >= player.position.x) enemy.facingEDirection = 'left';
             else if (enemy.position.x < player.position.y) enemy.facingEDirection = 'right';
 
+            platforms.forEach(platform => {
+                if (isCollidedWith(platform, enemy)) {
+                    enemy.velocity.x = (Math.random() > 0.5) ? 1 : -1;
+                    enemy.velocity.y = -enemy.velocity.y;
+                }
+            })
+
             enemy.update();
 
             projectiles.forEach((projectile, projectileIndex) => {
@@ -278,6 +339,7 @@ function main() {
                         enemy.lifeSpan = enemy.lifeSpan - (3 * lifeReductionWhenHit);
                         if (enemy.lifeSpan <= 0) enemy.lifeSpan = 0;
                     } else {
+                        kills += 1;
                         setTimeout(() => {
                             enemies.splice(enemyIndex, 1);
                         }, 0);
@@ -299,14 +361,14 @@ function main() {
                         enemy.weapon.weaponPosition.x,
                         enemy.weapon.weaponPosition.y,
                         5,
-                        'yellow',
+                        'red',
                         {
                             x: Math.cos(angle) * projectileSpeed,
                             y: Math.sin(angle) * projectileSpeed
                         }
                     ));
                     setTimeout(() => enemy.weapon.isFire = false, 0);
-                    setTimeout(() => enemy.weapon.isFire = true, 5000);
+                    setTimeout(() => enemy.weapon.isFire = true, 2000);
                 }
             } else {
                 var angle = calculateAngle(player, enemy);
@@ -317,13 +379,16 @@ function main() {
             if (enemy.weapon.bullet.length !== 0) {
                 enemy.weapon.bullet.forEach((bullet, bulletIndex) => {
                     bullet.update();
+
+                    //checking enemy bullet collision with player
                     if (isCollidedWith(player, bullet)) {
                         player.playerLifeSpan -= lifeReductionWhenHit;
+                        if (player.playerLifeSpan <= 0) player.playerLifeSpan = 0;
                         setTimeout(() => enemy.weapon.bullet.splice(bulletIndex, 1), 0);
 
                         if (player.playerLifeSpan <= 0) {
                             player.playerLifeSpan = 0;
-                            reset();
+                            reset()
                         }
                     }
 

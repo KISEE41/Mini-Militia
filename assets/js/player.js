@@ -91,10 +91,10 @@ class Hand {
 
 
 class Player {
-    constructor() {
+    constructor(x = canvas.width / 2, y = 10) {
         this.position = {
-            x: canvas.width / 2,
-            y: 10
+            x: x,
+            y: y
         }
         this.velocity = {
             x: 0,
@@ -188,7 +188,7 @@ class Player {
 }
 
 
-let player;
+export let player;
 //singleton design pattern
 export function playerCreation() {
     if (player === undefined) {

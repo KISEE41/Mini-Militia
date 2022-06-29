@@ -7,8 +7,8 @@ const verticalParallexVelocity = 4;
 
 const projectileSpeed = 30;
 
-const boosterReduction = 0.2;
-const boosterAddition = 0.025;
+const boosterReduction = 0.5;
+const boosterAddition = 0.04;
 
 const enemyLife = 50;
 

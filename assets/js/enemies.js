@@ -132,12 +132,13 @@ class Enemy {
 
 
 export const enemies = [];
-export let enemiesSpawnInterval = 50000;
+export let enemiesSpawnInterval;
 
 export function spawnEnemies() {
     enemies.push(new Enemy(0, -canvas.height * 2, { x: 1, y: 1 }));
 
     enemiesSpawnInterval = setInterval(() => {
+
         const x = randomIntFromRange(0, canvas.width);
         const y = -randomIntFromRange(canvas.height, canvas.height * 1.2);
 
@@ -152,5 +153,6 @@ export function spawnEnemies() {
         }
 
         enemies.push(new Enemy(x, y, velocity));
-    }, enemiesSpawnInterval);
+
+    }, 25000);
 }

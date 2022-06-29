@@ -1,5 +1,5 @@
 import { enemiesSpawnInterval, spawnEnemies } from './enemies.js';
-import { player, animateId, animate } from './main.js';
+import { player, animateId, animate, life } from './main.js';
 
 const statusIcon = createImage('./assets/images/status_icons.png');
 const playPause = createImage('./assets/images/play-pause.png');
@@ -91,7 +91,7 @@ export function indicator() {
         ctx.drawImage(head, 920, 40, 50, 50);
         ctx.font = 'bold 28px Arial';
         ctx.fillStyle = 'gray';
-        ctx.fillText("x 3", 990, 78);
+        ctx.fillText(`x ${life}`, 990, 78);
     }
 
     lifeIndicator();
@@ -131,9 +131,9 @@ canvas.addEventListener('click', (event) => {
             text.innerHTML = 'PLAY';
             setTimeout(() => {
                 text.remove();
-                requestAnimationFrame(animate);
                 spawnEnemies();
-            }, 500);
+                requestAnimationFrame(animate);
+            }, 50);
         }
     }
 })
