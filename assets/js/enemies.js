@@ -154,5 +154,5 @@ export function spawnEnemies() {
 
         enemies.push(new Enemy(x, y, velocity));
 
-    }, 15000);
+    }, 10000);
 }

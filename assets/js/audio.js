@@ -6,7 +6,7 @@ gameStart.loop = false;
 const fire2 = new Audio('./assets/audio/PistolOld.mp3');
 fire2.loop = false;
 
-const fire1 = new Audio('./assets/audio/gun_shot.mp3');
+const fire1 = new Audio('./assets/audio/PistolNew.mp3');
 fire1.loop = false;
 
 const dead = new Audio('./assets/audio/Dead.mp3');

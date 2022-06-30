@@ -426,7 +426,7 @@ export function main() {
                     ));
                     fire2.play();
                     setTimeout(() => enemy.weapon.isFire = false, 0);
-                    setTimeout(() => enemy.weapon.isFire = true, 2000);
+                    setTimeout(() => enemy.weapon.isFire = true, 1000);
                 }
             } else {
                 var angle = calculateAngle(player, enemy);
